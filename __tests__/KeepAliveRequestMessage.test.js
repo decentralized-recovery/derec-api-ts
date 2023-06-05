@@ -22,7 +22,7 @@
 // import { Message } from "../src/Message";
 // import { MessageType, ProtocolType } from "../src/DeRecTypes";
 import { ProtocolType, MessageType } from "../src/DeRecTypes";
-import { KeepAliveRequestMessage } from "../src/KeepAliveRequestMessage";
+import { KeepAliveRequestMessage } from "../src/KeepAliveProtocol/KeepAliveRequestMessage";
 import { randomBytes } from "@stablelib/random";
 import { KeyPair, generateKeyPairFromSeed, sign, SEED_LENGTH, convertSecretKeyToX25519, convertPublicKeyToX25519 } from "@stablelib/ed25519";
 import { AES } from "@stablelib/aes";
@@ -58,7 +58,7 @@ describe("KeepAliveRequestMessage", () => {
   });
   it("returns correct firstInProtocol()", async () => {
     const keepAliveRequestMessage = new KeepAliveRequestMessage();
-    expect(keepAliveRequestMessage.firstInProtocol()).toEqual(false);
+    expect(keepAliveRequestMessage.firstInProtocol()).toEqual(true);
   });
 
   it("encrypts and decrypts", async () => {

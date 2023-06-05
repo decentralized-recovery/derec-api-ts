@@ -1,10 +1,10 @@
-import { Message } from "./Message";
-import { MessageType, ProtocolType } from "./DeRecTypes";
+import { Message } from "../Message";
+import { MessageType, ProtocolType } from "../DeRecTypes";
 
 export class KeepAliveResponseMessage extends Message {
   private messageType: MessageType = MessageType.KEEP_ALIVE_RESPONSE;
   private protocolType: ProtocolType = ProtocolType.KEEP_ALIVE_PROTOCOL;
-  private storedLockboxShareVersion: number = -1;
+  private storedLockboxShareVersion: number;
 
   /* constructor, with parameters for all fields except MessageType */
   constructor(storedLockboxShareVersion: number) {
@@ -29,6 +29,7 @@ export class KeepAliveResponseMessage extends Message {
       */
   deserialize(message: Uint8Array): Message {
     const serialized = new Uint8Array(message);
+    let deserializedStoredLockboxShareVersion = -1;
     if (this.protocolVersion == 1) {
       let index = 0;
       const messageTypeDataView = new DataView(serialized.buffer, index, 2);
@@ -47,7 +48,7 @@ export class KeepAliveResponseMessage extends Message {
       throw `KeepAliveResponseMessage tried to deserialize message with protocol version: ${this.protocolVersion}`;
     }
 
-    return new KeepAliveResponseMessage();
+    return new KeepAliveResponseMessage(deserializedStoredLockboxShareVersion);
   }
 
   /* getters for all the fields */

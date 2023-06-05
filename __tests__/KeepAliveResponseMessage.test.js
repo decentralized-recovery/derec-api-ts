@@ -22,7 +22,7 @@
 // import { Message } from "../src/Message";
 // import { MessageType, ProtocolType } from "../src/DeRecTypes";
 import { ProtocolType, MessageType } from "../src/DeRecTypes";
-import { KeepAliveResponseMessage } from "../src/KeepAliveResponseMessage";
+import { KeepAliveResponseMessage } from "../src/KeepAliveProtocol/KeepAliveResponseMessage";
 import { randomBytes } from "@stablelib/random";
 import { KeyPair, generateKeyPairFromSeed, sign, SEED_LENGTH, convertSecretKeyToX25519, convertPublicKeyToX25519 } from "@stablelib/ed25519";
 import { AES } from "@stablelib/aes";
