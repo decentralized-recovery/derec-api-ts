@@ -1,5 +1,5 @@
-import { Message } from "./Message";
-import { MessageType, ProtocolType } from "./DeRecTypes";
+import { Message } from "../Message";
+import { MessageType, ProtocolType } from "../DeRecTypes";
 
 export class KeepAliveRequestMessage extends Message {
   private messageType: MessageType = MessageType.KEEP_ALIVE_REQUEST;
@@ -52,6 +52,6 @@ export class KeepAliveRequestMessage extends Message {
       @return true if this message is the first message starting a new protocol conversation
       */
   firstInProtocol(): boolean {
-    return false;
+    return true;
   }
 }
