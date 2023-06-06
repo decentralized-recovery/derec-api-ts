@@ -21,8 +21,8 @@
  */
 // import { Message } from "../src/Message";
 // import { MessageType, ProtocolType } from "../src/DeRecTypes";
-import { ProtocolType, MessageType } from "../src/DeRecTypes";
-import { KeepAliveRequestMessage } from "../src/KeepAliveProtocol/KeepAliveRequestMessage";
+import { ProtocolType, MessageType } from "../../src/DeRecTypes";
+import { KeepAliveResponseMessage } from "../../src/KeepAliveProtocol/KeepAliveResponseMessage";
 import { randomBytes } from "@stablelib/random";
 import { KeyPair, generateKeyPairFromSeed, sign, SEED_LENGTH, convertSecretKeyToX25519, convertPublicKeyToX25519 } from "@stablelib/ed25519";
 import { AES } from "@stablelib/aes";
@@ -32,6 +32,10 @@ var serializedTestMessage = null;
 var gcm = null;
 var iv = null;
 
+const protocolVersion = 1;
+
+const testStoredLockboxShareVersion = 0x1234;
+
 beforeAll(() => {
   const seed = randomBytes(SEED_LENGTH);
   const keyPair = generateKeyPairFromSeed(seed);
@@ -40,38 +44,35 @@ beforeAll(() => {
   iv = randomBytes(NONCE_LENGTH);
 });
 
-describe("KeepAliveRequestMessage", () => {
+describe("KeepAliveResponseMessage", () => {
   it("serializes", async () => {
-    const keepAliveRequestMessage = new KeepAliveRequestMessage();
-    const serialized = keepAliveRequestMessage.serialize();
-    expect(serialized.length).toEqual(2);
-    expect(serialized[0]).toEqual(2);
-    expect(serialized[1]).toEqual(0);
+    const keepAliveResponseMessage = new KeepAliveResponseMessage(protocolVersion, testStoredLockboxShareVersion);
+
+    const serialized = keepAliveResponseMessage.serialize(gcm, iv);
+    expect(serialized.length).toEqual(6);
+    expect(serialized[0]).toEqual(protocolVersion >> 8); // Protocol version
+    expect(serialized[1]).toEqual(protocolVersion & 0xff);
+    expect(serialized[2]).toEqual(MessageType.KEEP_ALIVE_RESPONSE >> 8);
+    expect(serialized[3]).toEqual(MessageType.KEEP_ALIVE_RESPONSE & 0xff);
+    expect(serialized[4]).toEqual(testStoredLockboxShareVersion >> 8);
+    expect(serialized[5]).toEqual(testStoredLockboxShareVersion & 0xff);
     serializedTestMessage = serialized;
   });
   it("deserializes", async () => {
-    const keepAliveRequestMessage = new KeepAliveRequestMessage();
-
-    const deserialized = keepAliveRequestMessage.deserialize(serializedTestMessage);
+    const keepAliveResponseMessage = new KeepAliveResponseMessage();
+    const deserialized = keepAliveResponseMessage.deserialize(gcm, iv, serializedTestMessage);
     expect(deserialized.getProtocolType()).toEqual(ProtocolType.KEEP_ALIVE_PROTOCOL);
-    expect(deserialized.getMessageType()).toEqual(MessageType.KEEP_ALIVE_REQUEST);
+    expect(deserialized.getMessageType()).toEqual(MessageType.KEEP_ALIVE_RESPONSE);
+    expect(deserialized.getStoredLockboxShareVersion()).toEqual(testStoredLockboxShareVersion);
   });
+
   it("returns correct firstInProtocol()", async () => {
-    const keepAliveRequestMessage = new KeepAliveRequestMessage();
-    expect(keepAliveRequestMessage.firstInProtocol()).toEqual(true);
-  });
-
-  it("encrypts and decrypts", async () => {
-    const keepAliveRequestMessage = new KeepAliveRequestMessage();
-    const testData = new Uint8Array(100).fill(0).map((data, index) => index);
-
-    const encryptedData = keepAliveRequestMessage.encrypt(testData, gcm, iv);
-    const decryptedData = keepAliveRequestMessage.decrypt(encryptedData, gcm, iv);
-    expect(decryptedData).toEqual(testData);
+    const keepAliveResponseMessage = new KeepAliveResponseMessage();
+    expect(keepAliveResponseMessage.firstInProtocol()).toEqual(false);
   });
 
   it("returns correct protocol version", async () => {
-    const keepAliveRequestMessage = new KeepAliveRequestMessage();
-    expect(keepAliveRequestMessage.getProtocolVersion()).toEqual(1);
+    const keepAliveResponseMessage = new KeepAliveResponseMessage();
+    expect(keepAliveResponseMessage.getProtocolVersion()).toEqual(protocolVersion);
   });
 });

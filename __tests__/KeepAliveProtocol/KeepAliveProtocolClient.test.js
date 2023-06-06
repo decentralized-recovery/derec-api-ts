@@ -20,16 +20,16 @@
  * Author: Dipti Mahamuni
  */
 
-import { ProtocolType, MessageType } from "../src/DeRecTypes";
-import { KeepAliveRequestMessage } from "../src/KeepAliveProtocol/KeepAliveRequestMessage";
-import { KeepAliveResponseMessage } from "../src/KeepAliveProtocol/KeepAliveResponseMessage";
-import { KeepAliveProtocolState } from "../src/KeepAliveProtocol/KeepAliveProtocolState";
+import { ProtocolType, MessageType } from "../../src/DeRecTypes";
+import { KeepAliveRequestMessage } from "../../src/KeepAliveProtocol/KeepAliveRequestMessage";
+import { KeepAliveResponseMessage } from "../../src/KeepAliveProtocol/KeepAliveResponseMessage";
+import { KeepAliveProtocolState } from "../../src/KeepAliveProtocol/KeepAliveProtocolState";
 // import { LockboxSharesUpdateProtocolState } from "../src/LockboxSharesUpdateProtocol/LockboxSharesUpdateProtocolState";
 import { randomBytes } from "@stablelib/random";
 import { KeyPair, generateKeyPairFromSeed, sign, SEED_LENGTH, convertSecretKeyToX25519, convertPublicKeyToX25519 } from "@stablelib/ed25519";
 import { AES } from "@stablelib/aes";
 import { GCM, NONCE_LENGTH } from "@stablelib/gcm";
-import { ProtocolState } from "../src/ProtocolState";
+import { ProtocolState } from "../../src/ProtocolState";
 
 var protocol = null;
 
