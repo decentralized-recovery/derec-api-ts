@@ -35,3 +35,8 @@ export enum MessageType {
   STORE_LOCKBOX_SHARE_RESPONSE = 0x0301,
   LOCKBOX_UPDATE_REQUEST = 0x0302,
 }
+
+export enum OperatingMode {
+  NORMAL = 0x00,
+  RECOVERY = 0xff,
+}
